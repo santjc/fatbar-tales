@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour {
     // Start is called before the first frame update
+
+    public static PlayerController instance;
     public float speed = 5f;
 
     private Rigidbody2D rb;
@@ -11,7 +13,6 @@ public class PlayerController : MonoBehaviour {
 
     public Animator animator;
 
-    private bool isHit = false;
     public Camera cam;
     Vector2 mousePos;
 
@@ -21,8 +22,13 @@ public class PlayerController : MonoBehaviour {
 
     public Transform firePoint;
     public GameObject bulletPrefab;
+    public GameObject clonePrefab;
 
-    public float bulletForce = 8f;
+    public float bulletForce = 5f;
+
+    private void Awake () {
+        instance = this;
+    }
 
     void Start () {
         rb = GetComponent<Rigidbody2D> ();
@@ -31,12 +37,17 @@ public class PlayerController : MonoBehaviour {
 
     void Update () {
         moveInput = new Vector2 (Input.GetAxisRaw ("Horizontal"), Input.GetAxisRaw ("Vertical"));
+        moveInput.Normalize ();
         moveVelocity = moveInput * speed;
 
         mousePos = cam.ScreenToWorldPoint (Input.mousePosition);
 
         if (Input.GetButtonDown ("Fire1")) {
             Shoot ();
+        }
+
+        if(Input.GetButtonDown("Jump")){
+            MakeClone();
         }
 
     }
@@ -59,22 +70,25 @@ public class PlayerController : MonoBehaviour {
     void Shoot () {
         GameObject bullet = Instantiate (bulletPrefab, firePoint.position, firePoint.rotation);
         Rigidbody2D rb = bullet.GetComponent<Rigidbody2D> ();
+        rb.AddForce (lookDir * bulletForce, ForceMode2D.Impulse);
     }
 
-    private void OnCollisionEnter2D (Collision2D other) {
-        if (other.gameObject.tag == "Enemy") {
-            // Vector2 difference = transform.position - other.transform.position;
-            // transform.position = new Vector2 (transform.position.x + difference.x * Time.fixedDeltaTime * 15f, transform.position.y + difference.y * Time.fixedDeltaTime * 15f);
+    void MakeClone () {
 
-            Debug.Log ("CHOCO");
+        float timer = 0;
+        timer += Time.deltaTime;
+        GameObject clone = Instantiate (clonePrefab, transform.position , transform.rotation);
+        Destroy(clone, 7);
+    }
 
+    public IEnumerator Knockback (float knockDuration, float knockPower, Transform obj) {
+        float timer = 0;
+        while (knockDuration > timer) {
+            timer += Time.deltaTime;
+            Vector2 dir = (obj.transform.position - this.transform.position).normalized;
+            rb.AddForce (-dir * knockPower);
         }
+        yield return 0;
     }
 
-    private void OnCollisionExit2D (Collision2D other) {
-        if (other.gameObject.tag == "Enemy") {
-            Debug.Log ("SE FUE");
-
-        }
-    }
 }

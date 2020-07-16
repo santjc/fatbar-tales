@@ -3,9 +3,12 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class EnemyController : MonoBehaviour {
+
+    public float knockPower = 10f;
+    public float knockDuration = 5;
     private Transform target;
     [SerializeField]
-    private float speed = 7f;
+    private float speed = 4f;
     [SerializeField]
     private float range;
     private bool isColliding = false;
@@ -29,10 +32,13 @@ public class EnemyController : MonoBehaviour {
     private void OnCollisionEnter2D (Collision2D other) {
         if (other.gameObject.tag == "Player") {
             isColliding = true;
+            StartCoroutine(PlayerController.instance.Knockback(knockDuration,knockPower,this.transform));
+
         }
     }
 
     private void OnCollisionExit2D(Collision2D other) {
         isColliding = false;
     }
+    
 }

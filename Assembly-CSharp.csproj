@@ -57,10 +57,14 @@
   <ItemGroup>
      <Compile Include="Assets\Script\Bullet.cs" />
      <Compile Include="Assets\Script\EnemyController.cs" />
+     <Compile Include="Assets\Script\HurtPlayer.cs" />
      <Compile Include="Assets\Script\LevelGenerate.cs" />
      <Compile Include="Assets\Script\PlayerController.cs" />
  <Reference Include="Unity.Timeline.Editor">
  <HintPath>A:/Unity Projects/elgordobarreiro/Library/ScriptAssemblies/Unity.Timeline.Editor.dll</HintPath>
+ </Reference>
+ <Reference Include="Unity.2D.PixelPerfect.Editor">
+ <HintPath>A:/Unity Projects/elgordobarreiro/Library/ScriptAssemblies/Unity.2D.PixelPerfect.Editor.dll</HintPath>
  </Reference>
  <Reference Include="Unity.VSCode.Editor">
  <HintPath>A:/Unity Projects/elgordobarreiro/Library/ScriptAssemblies/Unity.VSCode.Editor.dll</HintPath>
@@ -112,6 +116,9 @@
  </Reference>
  <Reference Include="Unity.2D.Tilemap.Editor">
  <HintPath>A:/Unity Projects/elgordobarreiro/Library/ScriptAssemblies/Unity.2D.Tilemap.Editor.dll</HintPath>
+ </Reference>
+ <Reference Include="Unity.2D.PixelPerfect">
+ <HintPath>A:/Unity Projects/elgordobarreiro/Library/ScriptAssemblies/Unity.2D.PixelPerfect.dll</HintPath>
  </Reference>
  <Reference Include="Unity.ShaderGraph.Editor">
  <HintPath>A:/Unity Projects/elgordobarreiro/Library/ScriptAssemblies/Unity.ShaderGraph.Editor.dll</HintPath>
