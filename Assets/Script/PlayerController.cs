@@ -7,6 +7,7 @@ public class PlayerController : MonoBehaviour {
 
     public static PlayerController instance;
     public float speed = 5f;
+    public float hp = 100f;
 
     private Rigidbody2D rb;
     private Vector2 moveVelocity;
@@ -50,6 +51,10 @@ public class PlayerController : MonoBehaviour {
             MakeClone();
         }
 
+        if(hp <= 80){
+            Destroy(gameObject);
+        }
+
     }
 
     void FixedUpdate () {
@@ -88,6 +93,11 @@ public class PlayerController : MonoBehaviour {
             Vector2 dir = (obj.transform.position - this.transform.position).normalized;
             rb.AddForce (-dir * knockPower);
         }
+        yield return 0;
+    }
+
+    public IEnumerator damageHp(float dmg){
+        hp = hp - dmg;
         yield return 0;
     }
 

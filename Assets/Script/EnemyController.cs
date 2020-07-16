@@ -5,7 +5,9 @@ using UnityEngine;
 public class EnemyController : MonoBehaviour {
 
     public float knockPower = 10f;
-    public float knockDuration = 5;
+    public float knockDuration = 5f;
+    public float enemyDmg = 5f;
+    public float enemyHp = 100f;
     private Transform target;
     [SerializeField]
     private float speed = 4f;
@@ -23,6 +25,10 @@ public class EnemyController : MonoBehaviour {
             FollowPlayer ();
         }
 
+        if (enemyHp <= 0) {
+            Destroy (gameObject);
+        }
+
     }
 
     public void FollowPlayer () {
@@ -32,13 +38,17 @@ public class EnemyController : MonoBehaviour {
     private void OnCollisionEnter2D (Collision2D other) {
         if (other.gameObject.tag == "Player") {
             isColliding = true;
-            StartCoroutine(PlayerController.instance.Knockback(knockDuration,knockPower,this.transform));
+            StartCoroutine (PlayerController.instance.Knockback (knockDuration, knockPower, this.transform));
+            StartCoroutine (PlayerController.instance.damageHp (enemyDmg));
+        }
 
+        if (other.gameObject.tag == "Ammo") {
+            enemyHp -= 5;
         }
     }
 
-    private void OnCollisionExit2D(Collision2D other) {
+    private void OnCollisionExit2D (Collision2D other) {
         isColliding = false;
     }
-    
+
 }
