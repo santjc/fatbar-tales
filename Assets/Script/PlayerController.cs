@@ -83,7 +83,7 @@ public class PlayerController : MonoBehaviour {
         float timer = 0;
         timer += Time.deltaTime;
         GameObject clone = Instantiate (clonePrefab, transform.position , transform.rotation);
-        Destroy(clone, 5);
+        Destroy(clone, 7);
     }
 
     public IEnumerator Knockback (float knockDuration, float knockPower, Transform obj) {

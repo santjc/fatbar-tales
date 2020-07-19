@@ -9,7 +9,6 @@ public class EnemyController : MonoBehaviour {
     public float enemyDmg = 2f;
     public float enemyHp = 100f;
     private Transform target;
-    private Transform clone;
     [SerializeField]
     private float speed = 4f;
     [SerializeField]
@@ -18,7 +17,6 @@ public class EnemyController : MonoBehaviour {
     // Start is called before the first frame update
     void Start () {
         target = FindObjectOfType<PlayerController> ().transform;
-        clone = FindObjectOfType<PlayerController>().transform;
     }
 
     // Update is called once per frame
@@ -30,7 +28,6 @@ public class EnemyController : MonoBehaviour {
         if (enemyHp <= 0) {
             Destroy (gameObject);
         }
-        
 
     }
 

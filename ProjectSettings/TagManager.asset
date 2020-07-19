@@ -6,7 +6,6 @@ TagManager:
   tags:
   - Enemy
   - Ammo
-  - PlayerClone
   layers:
   - Default
   - TransparentFX
