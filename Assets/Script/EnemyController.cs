@@ -6,7 +6,7 @@ public class EnemyController : MonoBehaviour {
 
     public float knockPower = 10f;
     public float knockDuration = 5f;
-    public float enemyDmg = 5f;
+    public float enemyDmg = 2f;
     public float enemyHp = 100f;
     private Transform target;
     [SerializeField]
@@ -21,7 +21,7 @@ public class EnemyController : MonoBehaviour {
 
     // Update is called once per frame
     void Update () {
-        if (!isColliding) {
+        if (!isColliding && target != null) {
             FollowPlayer ();
         }
 
@@ -43,7 +43,7 @@ public class EnemyController : MonoBehaviour {
         }
 
         if (other.gameObject.tag == "Ammo") {
-            enemyHp -= 5;
+            enemyHp -= 15;
         }
     }
 
