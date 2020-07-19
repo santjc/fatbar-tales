@@ -4,12 +4,26 @@ using UnityEngine;
 
 public class Bullet : MonoBehaviour
 {
+
+    public float lifeTime = 1.5f;
     // Start is called before the first frame update
-    void OnCollisionEnter2D(Collision2D col) {
+    void Start(){
+        StartCoroutine(DeathDelay());
+    }
+
+    void Update(){
+
+    }
+
+    IEnumerator DeathDelay(){
+        yield return new WaitForSeconds(lifeTime);
         Destroy(gameObject);
     }
 
     private void OnTriggerEnter2D(Collider2D other) {
-        Destroy(gameObject);
+        if(other.gameObject.tag == "Enemy"){
+            other.gameObject.GetComponent<EnemyController>().Death();
+            Destroy(gameObject);
+        }
     }
 }

@@ -24,6 +24,8 @@ public class PlayerController : MonoBehaviour {
     public Transform firePoint;
     public GameObject bulletPrefab;
     public GameObject clonePrefab;
+    private float lastFire;
+    public float fireDelay = 0.3f;
 
     public float bulletForce = 5f;
 
@@ -41,27 +43,27 @@ public class PlayerController : MonoBehaviour {
         moveInput.Normalize ();
         moveVelocity = moveInput * speed;
 
-        mousePos = cam.ScreenToWorldPoint (Input.mousePosition);
+        float shootHor = Input.GetAxis ("ShotH");
+        float shootVert = Input.GetAxis ("ShotV");
 
-        if (Input.GetButtonDown ("Fire1")) {
-            Shoot ();
+        Debug.Log(shootHor + " /// " + shootVert);
+        if ((shootHor != 0 || shootVert != 0) && Time.time > lastFire + fireDelay) {
+            Shoot (shootHor, shootVert);
+            lastFire = Time.time;
         }
 
-        if(Input.GetButtonDown("Jump")){
-            MakeClone();
+        if (Input.GetButtonDown ("Jump")) {
+            MakeClone ();
         }
 
-        if(hp <= 80){
-            Destroy(gameObject);
+        if (hp <= 80) {
+            Destroy (gameObject);
         }
 
     }
 
     void FixedUpdate () {
         rb.MovePosition (rb.position + moveVelocity * Time.fixedDeltaTime);
-        // speed = Mathf.Clamp(moveInput.magnitude,0.0f,10f);
-        lookDir = mousePos - rb.position;
-        lookAngle = Mathf.Atan2 (lookDir.y, lookDir.x) * Mathf.Rad2Deg - 90f;
         Animate ();
     }
 
@@ -72,31 +74,24 @@ public class PlayerController : MonoBehaviour {
 
     }
 
-    void Shoot () {
-        GameObject bullet = Instantiate (bulletPrefab, firePoint.position, firePoint.rotation);
-        Rigidbody2D rb = bullet.GetComponent<Rigidbody2D> ();
-        rb.AddForce (lookDir * bulletForce, ForceMode2D.Impulse);
+    void Shoot (float x, float y) {
+        GameObject bullet = Instantiate (bulletPrefab, transform.position, transform.rotation) as GameObject;
+        bullet.AddComponent<Rigidbody2D> ().gravityScale = 0;
+        bullet.GetComponent<Rigidbody2D> ().velocity = new Vector3 (
+            (x < 0) ? Mathf.Floor (x) * bulletForce : Mathf.Ceil (x) * bulletForce,
+            (y < 0) ? Mathf.Floor (y) * bulletForce : Mathf.Ceil (y) * bulletForce, 0
+        );
     }
 
     void MakeClone () {
-
         float timer = 0;
         timer += Time.deltaTime;
-        GameObject clone = Instantiate (clonePrefab, transform.position , transform.rotation);
-        Destroy(clone, 5);
+        GameObject clone = Instantiate (clonePrefab, transform.position, transform.rotation);
+        Destroy (clone, 5);
     }
 
-    public IEnumerator Knockback (float knockDuration, float knockPower, Transform obj) {
-        float timer = 0;
-        while (knockDuration > timer) {
-            timer += Time.deltaTime;
-            Vector2 dir = (obj.transform.position - this.transform.position).normalized;
-            rb.AddForce (-dir * knockPower);
-        }
-        yield return 0;
-    }
 
-    public IEnumerator damageHp(float dmg){
+    public IEnumerator damageHp (float dmg) {
         hp = hp - dmg;
         yield return 0;
     }

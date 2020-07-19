@@ -2,56 +2,74 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+public enum EnemyState {
+    Search,
+    Follow,
+    Die
+}
 public class EnemyController : MonoBehaviour {
 
-    public float knockPower = 10f;
-    public float knockDuration = 5f;
-    public float enemyDmg = 2f;
-    public float enemyHp = 100f;
-    private Transform target;
-    private Transform clone;
-    [SerializeField]
-    private float speed = 4f;
-    [SerializeField]
-    private float range;
-    private bool isColliding = false;
-    // Start is called before the first frame update
+    GameObject player;
+    public EnemyState currentState = EnemyState.Search;
+    public float range = 5f;
+    public float speed = 2f;
+
+    private bool chooseDir = false;
+    private bool dead = false;
+    private Vector3 randomDir;
+
     void Start () {
-        target = FindObjectOfType<PlayerController> ().transform;
-        clone = FindObjectOfType<PlayerController>().transform;
+        player = GameObject.FindGameObjectWithTag ("Player");
     }
 
-    // Update is called once per frame
     void Update () {
-        if (!isColliding && target != null) {
-            FollowPlayer ();
+        switch (currentState) {
+            case (EnemyState.Search):
+                Search ();
+                break;
+            case (EnemyState.Follow):
+                Follow ();
+                break;
+            case (EnemyState.Die):
+
+                break;
         }
 
-        if (enemyHp <= 0) {
-            Destroy (gameObject);
-        }
-        
-
-    }
-
-    public void FollowPlayer () {
-        transform.position = Vector3.MoveTowards (transform.position, target.transform.position, speed * Time.deltaTime);
-    }
-
-    private void OnCollisionEnter2D (Collision2D other) {
-        if (other.gameObject.tag == "Player") {
-            isColliding = true;
-            StartCoroutine (PlayerController.instance.Knockback (knockDuration, knockPower, this.transform));
-            StartCoroutine (PlayerController.instance.damageHp (enemyDmg));
-        }
-
-        if (other.gameObject.tag == "Ammo") {
-            enemyHp -= 15;
+        if (isInRange (range) && currentState != EnemyState.Die) {
+            currentState = EnemyState.Follow;
+        } else if (!isInRange (range) && currentState != EnemyState.Die) {
+            currentState = EnemyState.Search;
         }
     }
 
-    private void OnCollisionExit2D (Collision2D other) {
-        isColliding = false;
+    private IEnumerator ChooseDirection () {
+        chooseDir = true;
+        yield return new WaitForSeconds (Random.Range (2f, 8f));
+        randomDir = new Vector3 (0, 0, Random.Range (0, 360));
+        Quaternion nextRotation = Quaternion.Euler (randomDir);
+        transform.rotation = Quaternion.Slerp (transform.rotation, nextRotation, Random.Range (0f, 1f));
+        chooseDir = false;
+    }
+
+    private bool isInRange (float range) {
+        return Vector3.Distance (transform.position, player.transform.position) <= range;
+    }
+    void Search () {
+        if (!chooseDir) {
+            StartCoroutine (ChooseDirection ());
+        }
+        transform.position += -transform.right * speed * Time.deltaTime;
+        if (isInRange (range)) {
+            currentState = EnemyState.Follow;
+        }
+    }
+
+    void Follow () {
+        transform.position = Vector2.MoveTowards (transform.position, player.transform.position, speed * Time.deltaTime);
+    }
+
+    public void Death(){
+        Destroy(gameObject);
     }
 
 }
