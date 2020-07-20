@@ -8,13 +8,20 @@ public enum EnemyState {
     Die,
     Attack
 }
+
+public enum EnemyType{
+    Ranged,
+    Melee
+};
 public class EnemyController : MonoBehaviour {
 
     GameObject player;
     public EnemyState currentState = EnemyState.Search;
+    public EnemyType enemyType;
     public float range = 5f;
     public float attackRange;
     public float speed = 2f;
+    public GameObject bulletPrefab;
 
     private bool chooseDir = false;
     private bool dead = false;
@@ -56,7 +63,7 @@ public class EnemyController : MonoBehaviour {
 
     private IEnumerator ChooseDirection () {
         chooseDir = true;
-        yield return new WaitForSeconds (Random.Range (2f, 8f));
+        yield return new WaitForSeconds (Random.Range (0f, 5f));
         randomDir = new Vector3 (0, 0, Random.Range (0, 360));
         Quaternion nextRotation = Quaternion.Euler (randomDir);
         transform.rotation = Quaternion.Slerp (transform.rotation, nextRotation, Random.Range (0f, 1f));
@@ -83,8 +90,19 @@ public class EnemyController : MonoBehaviour {
 
     void Attack () {
         if (!cdAttack) {
-            GameController.DamagePlayer (1);
-            StartCoroutine (CoolDown ());
+            switch (enemyType) {
+                case (EnemyType.Melee):
+                    GameController.DamagePlayer (1);
+                    StartCoroutine (CoolDown ());
+                    break;
+                case (EnemyType.Ranged):
+                    GameObject bullet = Instantiate (bulletPrefab, transform.position, Quaternion.identity);
+                    bullet.GetComponent<Bullet> ().GetPlayer (player.transform);
+                    bullet.AddComponent<Rigidbody2D> ().gravityScale = 0;
+                    bullet.GetComponent<Bullet> ().isEnemyBullet = true;
+                    StartCoroutine (CoolDown ());
+                    break;
+            }
         }
     }
 

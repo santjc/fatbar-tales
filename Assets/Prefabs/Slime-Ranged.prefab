@@ -83,8 +83,8 @@ GameObject:
   - component: {fileID: 5338561831345469467}
   - component: {fileID: 7835441236662044323}
   m_Layer: 0
-  m_Name: enemy-slime-1
-  m_TagString: Untagged
+  m_Name: EnemyRanged
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -192,7 +192,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   currentState: 0
+  enemyType: 0
   range: 5
   attackRange: 0
   speed: 2
+  bulletPrefab: {fileID: 3665118512759833747, guid: a283453352dc3aa43ba84e97154f9112,
+    type: 3}
   coolDown: 0
