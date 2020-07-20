@@ -7,7 +7,6 @@ public class PlayerController : MonoBehaviour {
 
     public static PlayerController instance;
     public float speed = 5f;
-    public float hp = 100f;
 
     private Rigidbody2D rb;
     private Vector2 moveVelocity;
@@ -56,9 +55,6 @@ public class PlayerController : MonoBehaviour {
             MakeClone ();
         }
 
-        if (hp <= 80) {
-            Destroy (gameObject);
-        }
 
     }
 
@@ -86,14 +82,9 @@ public class PlayerController : MonoBehaviour {
     void MakeClone () {
         float timer = 0;
         timer += Time.deltaTime;
-        GameObject clone = Instantiate (clonePrefab, transform.position, transform.rotation);
+        GameObject clone = Instantiate (clonePrefab, transform.position, transform.rotation) as GameObject;
         Destroy (clone, 5);
     }
 
-
-    public IEnumerator damageHp (float dmg) {
-        hp = hp - dmg;
-        yield return 0;
-    }
 
 }

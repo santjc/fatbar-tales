@@ -5,17 +5,21 @@ using UnityEngine;
 public enum EnemyState {
     Search,
     Follow,
-    Die
+    Die,
+    Attack
 }
 public class EnemyController : MonoBehaviour {
 
     GameObject player;
     public EnemyState currentState = EnemyState.Search;
     public float range = 5f;
+    public float attackRange;
     public float speed = 2f;
 
     private bool chooseDir = false;
     private bool dead = false;
+    private bool cdAttack = false;
+    public float coolDown;
     private Vector3 randomDir;
 
     void Start () {
@@ -33,12 +37,20 @@ public class EnemyController : MonoBehaviour {
             case (EnemyState.Die):
 
                 break;
+
+            case (EnemyState.Attack):
+                Attack ();
+                break;
         }
 
         if (isInRange (range) && currentState != EnemyState.Die) {
             currentState = EnemyState.Follow;
         } else if (!isInRange (range) && currentState != EnemyState.Die) {
             currentState = EnemyState.Search;
+        }
+
+        if (Vector3.Distance (transform.position, player.transform.position) <= attackRange) {
+            currentState = EnemyState.Attack;
         }
     }
 
@@ -62,14 +74,28 @@ public class EnemyController : MonoBehaviour {
         if (isInRange (range)) {
             currentState = EnemyState.Follow;
         }
+
     }
 
     void Follow () {
         transform.position = Vector2.MoveTowards (transform.position, player.transform.position, speed * Time.deltaTime);
     }
 
-    public void Death(){
-        Destroy(gameObject);
+    void Attack () {
+        if (!cdAttack) {
+            GameController.DamagePlayer (1);
+            StartCoroutine (CoolDown ());
+        }
+    }
+
+    public void Death () {
+        Destroy (gameObject);
+    }
+
+    private IEnumerator CoolDown () {
+        cdAttack = true;
+        yield return new WaitForSeconds (coolDown);
+        cdAttack = false;
     }
 
 }
