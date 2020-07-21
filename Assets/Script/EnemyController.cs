@@ -35,12 +35,12 @@ public class EnemyController : MonoBehaviour {
 
     void Update () {
         switch (currentState) {
-            case (EnemyState.Search):
-                Search ();
-                break;
-            case (EnemyState.Follow):
-                Follow ();
-                break;
+            // case (EnemyState.Search):
+            //     Search ();
+            //     break;
+            // case (EnemyState.Follow):
+            //     Follow ();
+            //     break;
             case (EnemyState.Die):
 
                 break;
@@ -66,7 +66,7 @@ public class EnemyController : MonoBehaviour {
         yield return new WaitForSeconds (Random.Range (0f, 5f));
         randomDir = new Vector3 (0, 0, Random.Range (0, 360));
         Quaternion nextRotation = Quaternion.Euler (randomDir);
-        transform.rotation = Quaternion.Slerp (transform.rotation, nextRotation, Random.Range (0f, 1f));
+        transform.rotation = Quaternion.Lerp (transform.rotation, nextRotation, Random.Range (1f, 2f));
         chooseDir = false;
     }
 
